@@ -3,7 +3,7 @@ import React from 'react';
 import {
   View,
   Text,
-  SafeAreaView,
+  TextInput,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -50,17 +50,74 @@ const SignUp = () => {
       <View
         style={{
           marginTop: theme.SIZES.padding * 8,
-          height: 50,
+          height: 10,
           alignItems: 'center',
           justifyContent: 'center',
+          backgroundColor: theme.COLORS.lightRed,
+          marginHorizontal: theme.SIZES.padding * 3,
         }}>
         <Image
           source={images.walletLogo}
           resizeMode={'contain'}
           style={{
-            width: '40%',
+            width: '35%',
           }}
         />
+      </View>
+    );
+  }
+
+  function renderForm() {
+    return (
+      <View
+        style={{
+          marginTop: theme.SIZES.padding * 3,
+          marginHorizontal: theme.SIZES.padding * 3,
+        }}>
+        {/* Full Name */}
+        <View style={{marginTop: theme.SIZES.padding * 3}}>
+          <Text style={{color: theme.COLORS.lightGreen, ...theme.FONTS.body3}}>
+            Private Key
+          </Text>
+          <TextInput
+            style={{
+              marginVertical: theme.SIZES.padding,
+              borderBottomColor: theme.COLORS.white,
+              borderBottomWidth: 1,
+              height: 40,
+              color: theme.COLORS.white,
+              ...theme.FONTS.body3,
+            }}
+            placeholder={'Enter your private key'}
+            placeholderTextColor={theme.COLORS.white}
+            selectionColor={theme.COLORS.white}
+          />
+        </View>
+        {/* Phone Number */}
+      </View>
+    );
+  }
+
+  function renderButton() {
+    return (
+      <View
+        style={{
+          marginTop: theme.SIZES.padding * 3,
+          marginHorizontal: theme.SIZES.padding * 2,
+        }}>
+        <TouchableOpacity
+          style={{
+            height: 60,
+            backgroundColor: theme.COLORS.black,
+            borderRadius: theme.SIZES.radius / 1.5,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onPress={() => console.log('Sign Up doing')}>
+          <Text style={{color: theme.COLORS.white, ...theme.FONTS.body3}}>
+            Sign Up
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -72,9 +129,13 @@ const SignUp = () => {
       <LinearGradient
         colors={[theme.COLORS.lime, theme.COLORS.emerald]}
         style={{flex: 1}}>
-        <ScrollView>
+        <ScrollView style={{flex: 1}}>
           {renderHeader()}
-          {renderLogo()}
+          <View style={{marginTop: '20%'}}>
+            {renderLogo()}
+            {renderForm()}
+            {renderButton()}
+          </View>
         </ScrollView>
       </LinearGradient>
     </KeyboardAvoidingView>
