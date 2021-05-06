@@ -8,7 +8,7 @@ const eye = require('../assets/icons/eye.png');
 const game = require('../assets/icons/games.png');
 const barcode = require('../assets/icons/barcode.png');
 const info = require('../assets/icons/info.png');
-const intenet = require('../assets/icons/intenet.png');
+const internet = require('../assets/icons/internet.png');
 const more = require('../assets/icons/more.png');
 const phone = require('../assets/icons/phone.png');
 const reload = require('../assets/icons/reload.png');
@@ -18,6 +18,22 @@ const user = require('../assets/icons/user.png');
 const wallet = require('../assets/icons/wallet.png');
 
 export default {
-    back, bell, bill, close, disable_eye, down, eye, game, barcode, info, intenet, more, phone, reload, scan, send, user, wallet
-}
-
+  back,
+  bell,
+  bill,
+  close,
+  disable_eye,
+  down,
+  eye,
+  game,
+  barcode,
+  info,
+  internet,
+  more,
+  phone,
+  reload,
+  scan,
+  send,
+  user,
+  wallet,
+};
