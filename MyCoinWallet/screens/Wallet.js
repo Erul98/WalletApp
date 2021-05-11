@@ -13,19 +13,21 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {theme, icons, images} from '../constants';
 
-const SignUp = () => {
+const Wallet = props => {
+  const navigation = props.navigation;
   function renderHeader() {
     return (
       <TouchableOpacity
         style={{
+          flex: 1,
           flexDirection: 'row',
           alignItems: 'center',
           marginTop: theme.SIZES.padding * 6,
           paddingHorizontal: theme.SIZES.padding * 2,
         }}
-        onPress={() => console.log('Back')}>
+        onPress={() => navigation.navigate('MainScreen')}>
         <Image
-          source={icons.back}
+          source={icons.close}
           resizeMode={'contain'}
           style={{
             width: 20,
@@ -39,7 +41,7 @@ const SignUp = () => {
             color: theme.COLORS.white,
             ...theme.FONTS.h4,
           }}>
-          Sign Up
+          Logout
         </Text>
       </TouchableOpacity>
     );
@@ -49,20 +51,45 @@ const SignUp = () => {
     return (
       <View
         style={{
-          marginTop: theme.SIZES.padding * 8,
-          height: 10,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: theme.COLORS.lightRed,
-          marginHorizontal: theme.SIZES.padding * 3,
+          flex: 1,
+          marginTop: theme.SIZES.padding * 2,
+          height: theme.SIZES.padding * 10,
+          flexDirection: 'row',
+          marginHorizontal: theme.SIZES.padding * 2,
         }}>
         <Image
           source={images.walletLogo}
           resizeMode={'contain'}
           style={{
-            width: '35%',
+            flex: 1,
+            width: theme.SIZES.padding * 10,
+            height: theme.SIZES.padding * 10,
           }}
         />
+        <View
+          style={{
+            flex: 2,
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+          }}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'column',
+              marginStart: theme.SIZES.padding * 2,
+            }}>
+            <View style={{flex: 1}}>
+              <Text style={{color: theme.COLORS.white, ...theme.FONTS.body3}}>
+                Address:
+              </Text>
+            </View>
+            <View style={{flex: 1}}>
+              <Text style={{color: theme.COLORS.white, ...theme.FONTS.body3}}>
+                Amount of coint:
+              </Text>
+            </View>
+          </View>
+        </View>
       </View>
     );
   }
@@ -71,13 +98,31 @@ const SignUp = () => {
     return (
       <View
         style={{
+          flex: 1,
           marginTop: theme.SIZES.padding * 3,
           marginHorizontal: theme.SIZES.padding * 3,
         }}>
-        {/* Full Name */}
+        {/* Payer */}
         <View style={{marginTop: theme.SIZES.padding * 3}}>
           <Text style={{color: theme.COLORS.lightGreen, ...theme.FONTS.body3}}>
-            Private Key
+            Payee address (Read Only)
+          </Text>
+          <TextInput
+            editable={false}
+            style={{
+              marginVertical: theme.SIZES.padding,
+              borderBottomColor: theme.COLORS.white,
+              borderBottomWidth: 1,
+              height: 40,
+              color: theme.COLORS.white,
+              ...theme.FONTS.body3,
+            }}
+          />
+        </View>
+        {/* Payee */}
+        <View style={{marginTop: theme.SIZES.padding * 3}}>
+          <Text style={{color: theme.COLORS.lightGreen, ...theme.FONTS.body3}}>
+            Payer address
           </Text>
           <TextInput
             style={{
@@ -88,12 +133,29 @@ const SignUp = () => {
               color: theme.COLORS.white,
               ...theme.FONTS.body3,
             }}
-            placeholder={'Enter your private key'}
+            placeholder={'Enter payer '}
             placeholderTextColor={theme.COLORS.white}
             selectionColor={theme.COLORS.white}
           />
         </View>
-        {/* Phone Number */}
+        <View style={{marginTop: theme.SIZES.padding * 3}}>
+          <Text style={{color: theme.COLORS.lightGreen, ...theme.FONTS.body3}}>
+            Amount of Coin (Target 3 H2Y)
+          </Text>
+          <TextInput
+            style={{
+              marginVertical: theme.SIZES.padding,
+              borderBottomColor: theme.COLORS.white,
+              borderBottomWidth: 1,
+              height: 40,
+              color: theme.COLORS.white,
+              ...theme.FONTS.body3,
+            }}
+            placeholder={'Enter amount of coin '}
+            placeholderTextColor={theme.COLORS.white}
+            selectionColor={theme.COLORS.white}
+          />
+        </View>
       </View>
     );
   }
@@ -102,6 +164,7 @@ const SignUp = () => {
     return (
       <View
         style={{
+          flex: 1,
           marginTop: theme.SIZES.padding * 3,
           marginHorizontal: theme.SIZES.padding * 2,
         }}>
@@ -113,9 +176,9 @@ const SignUp = () => {
             alignItems: 'center',
             justifyContent: 'center',
           }}
-          onPress={() => console.log('Sign Up doing')}>
+          onPress={() => navigation.push('TabBottom')}>
           <Text style={{color: theme.COLORS.white, ...theme.FONTS.body3}}>
-            Sign Up
+            Send Coin
           </Text>
         </TouchableOpacity>
       </View>
@@ -129,17 +192,15 @@ const SignUp = () => {
       <LinearGradient
         colors={[theme.COLORS.lime, theme.COLORS.emerald]}
         style={{flex: 1}}>
-        <ScrollView style={{flex: 1}}>
+        <ScrollView>
           {renderHeader()}
-          <View style={{marginTop: '20%'}}>
-            {renderLogo()}
-            {renderForm()}
-            {renderButton()}
-          </View>
+          {renderLogo()}
+          {renderForm()}
+          {renderButton()}
         </ScrollView>
       </LinearGradient>
     </KeyboardAvoidingView>
   );
 };
 
-export default SignUp;
+export default Wallet;

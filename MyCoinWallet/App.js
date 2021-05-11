@@ -7,32 +7,14 @@
  */
 
 import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
-import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {SignUp} from './screens';
-
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    border: 'transparent',
-  },
-};
-
-const Stack = createStackNavigator();
+import SplashScreen from 'react-native-splash-screen';
+import {NVContainer} from './navigation/index';
 
 const App = () => {
-  return (
-    <NavigationContainer theme={theme}>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-        initialRouteName={'SignUp'}>
-        <Stack.Screen name="SignUp" component={SignUp} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+  React.useEffect(() => {
+    SplashScreen.hide();
+  }, []);
+  return <NVContainer />;
 };
 
 export default App;

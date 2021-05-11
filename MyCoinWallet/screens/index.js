@@ -1,5 +1,7 @@
-import Home from './Home';
-import SignUp from './SignUp';
+import Wallet from './Wallet';
+import SignIn from './SignIn';
 import Scan from './Scan';
+import MainScreen from './Main';
+import Transaction from './Transaction';
 
-export {Home, Scan, SignUp};
+export {MainScreen, Wallet, Scan, SignIn, Transaction};

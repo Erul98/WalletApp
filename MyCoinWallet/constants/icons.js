@@ -16,8 +16,13 @@ const scan = require('../assets/icons/scan.png');
 const send = require('../assets/icons/send.png');
 const user = require('../assets/icons/user.png');
 const wallet = require('../assets/icons/wallet.png');
+const transaction = require('../assets/icons/transaction.png');
+const scan_qr = require('../assets/icons/scan_qr.png');
+const code_qr = require('../assets/icons/qr_code.png');
 
 export default {
+  scan_qr,
+  code_qr,
   back,
   bell,
   bill,
@@ -36,4 +41,5 @@ export default {
   send,
   user,
   wallet,
+  transaction,
 };
