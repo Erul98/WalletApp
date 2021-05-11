@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
@@ -12,9 +13,33 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {theme, icons, images} from '../constants';
+import Clipboard from '@react-native-community/clipboard';
 
 const SignIn = props => {
   const navigation = props.navigation;
+  const [valueTextInput, setValueTextInput] = React.useState(null);
+  React.useEffect(() => {
+    setValueTextInput(props.route.params?.data.body.privateKey);
+  }, []);
+  const loginWallet = async key => {
+    try {
+      let response = await fetch('http://192.168.1.5:8080/api/v1/auth', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({key: key}),
+      });
+      let json = await response.json();
+      console.log(json);
+      if (json.body !== null) {
+        navigation.push('TabBottom', {data: json});
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   function renderHeader() {
     return (
       <TouchableOpacity
@@ -55,7 +80,8 @@ const SignIn = props => {
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: theme.COLORS.lightRed,
-          marginHorizontal: theme.SIZES.padding * 3,
+          marginHorizontal: theme.SIZES.padding * 10,
+          borderRadius: theme.SIZES.radius,
         }}>
         <Image
           source={images.walletLogo}
@@ -73,7 +99,7 @@ const SignIn = props => {
     return (
       <View
         style={{
-          marginTop: theme.SIZES.padding * 3,
+          marginTop: theme.SIZES.padding * 6,
           marginHorizontal: theme.SIZES.padding * 3,
         }}>
         {/* Full Name */}
@@ -81,19 +107,45 @@ const SignIn = props => {
           <Text style={{color: theme.COLORS.lightGreen, ...theme.FONTS.body3}}>
             Private Key
           </Text>
-          <TextInput
+          <View
             style={{
-              marginVertical: theme.SIZES.padding,
-              borderBottomColor: theme.COLORS.white,
-              borderBottomWidth: 1,
-              height: 40,
-              color: theme.COLORS.white,
-              ...theme.FONTS.body3,
-            }}
-            placeholder={'Enter your private key'}
-            placeholderTextColor={theme.COLORS.white}
-            selectionColor={theme.COLORS.white}
-          />
+              flexDirection: 'row',
+              alignItems: 'stretch',
+            }}>
+            <TextInput
+              style={{
+                flex: 10,
+                marginVertical: theme.SIZES.padding,
+                borderBottomColor: theme.COLORS.white,
+                borderBottomWidth: 1,
+                height: 40,
+                color: theme.COLORS.white,
+                ...theme.FONTS.body3,
+              }}
+              value={valueTextInput}
+              onChangeText={textChanged => setValueTextInput(textChanged)}
+              placeholder={'Enter your private key'}
+              placeholderTextColor={theme.COLORS.white}
+              selectionColor={theme.COLORS.white}
+            />
+            <TouchableOpacity
+              onPress={() => Clipboard.setString(valueTextInput)}
+              style={{
+                flex: 1,
+                alignItems: 'center',
+              }}>
+              <Image
+                source={icons.copy}
+                resizeMode={'contain'}
+                style={{
+                  height: 25,
+                  width: 25,
+                  tintColor: theme.COLORS.purple,
+                  flex: 1,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         {/* Phone Number */}
       </View>
@@ -115,7 +167,7 @@ const SignIn = props => {
             alignItems: 'center',
             justifyContent: 'center',
           }}
-          onPress={() => navigation.push('TabBottom')}>
+          onPress={() => loginWallet(valueTextInput)}>
           <Text style={{color: theme.COLORS.white, ...theme.FONTS.body3}}>
             Sign In
           </Text>

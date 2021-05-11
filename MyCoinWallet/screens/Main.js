@@ -21,6 +21,24 @@ const MainScreen = props => {
   //     });
   //     navigation.dispatch(navigateAction);
   //   };
+  const signUp = async () => {
+    try {
+      let response = await fetch('http://192.168.1.5:8080/api/v1/wallet', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      let json = await response.json();
+      console.log(json);
+      if (json.body !== null) {
+        navigation.push('SignIn', {data: json});
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   function renderSubView() {
     return (
       <View
@@ -62,7 +80,7 @@ const MainScreen = props => {
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            onPress={() => console.log('Sign Up doing')}>
+            onPress={() => signUp()}>
             <Text style={{color: theme.COLORS.white, ...theme.FONTS.body3}}>
               Sign Up
             </Text>

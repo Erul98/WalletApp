@@ -9,9 +9,10 @@ import {COLORS, FONTS} from '../constants/theme';
 
 const Tab = createBottomTabNavigator();
 
-const MyTabs = () => {
+const MyTabs = props => {
   return (
     <Tab.Navigator
+      screenProps={props.route.params}
       tabBarOptions={{
         showLabel: false,
         activeTintColor: COLORS.primary,
@@ -28,6 +29,7 @@ const MyTabs = () => {
       }}
       initialRouteName={'Wallet'}>
       <Tab.Screen
+        initialParams={props.route.params}
         name="Wallet"
         component={Screens.Wallet}
         options={{
@@ -54,6 +56,7 @@ const MyTabs = () => {
         }}
       />
       <Tab.Screen
+        initialParams={props.route.params}
         name="Transaction"
         component={Screens.Transaction}
         options={{
@@ -81,6 +84,7 @@ const MyTabs = () => {
       />
       <Tab.Screen
         name="Scan"
+        initialParams={props.route.params}
         component={Screens.Scan}
         options={{
           tabBarIcon: ({color}) => (

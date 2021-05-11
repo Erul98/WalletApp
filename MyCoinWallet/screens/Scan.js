@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
@@ -13,10 +14,15 @@ import {theme, icons, images} from '../constants';
 import QRCode from 'react-native-qrcode-svg';
 import LinearGradient from 'react-native-linear-gradient';
 
-const Scan = () => {
+const Scan = props => {
   const [isShowView, setShowView] = React.useState(false);
   const [getIcon, setIcon] = React.useState(icons.code_qr);
   const [getIconText, setIconText] = React.useState('QR Code');
+  const [getData, setData] = React.useState(null);
+  console.log(props.route.params?.data);
+  React.useEffect(() => {
+    setData(props.route.params?.data);
+  }, []);
 
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
@@ -42,7 +48,7 @@ const Scan = () => {
     return (
       <QRCode
         size={theme.SIZES.width - theme.SIZES.padding * 10}
-        value="http://awesome.link.qr"
+        value={getData !== null ? getData.body.address : 'ERROR'}
       />
     );
   };
@@ -124,7 +130,7 @@ const Scan = () => {
             <Image
               source={getIcon}
               resizeMode={'cover'}
-              style={{height: 25, width: 25, color: theme.COLORS.purple}}
+              style={{height: 25, width: 25, tintColor: theme.COLORS.purple}}
             />
           </View>
           <Text
@@ -162,7 +168,7 @@ const Scan = () => {
   };
 
   const onBarCodeRead = result => {
-    console.log(result);
+    props.navigation.navigate('Wallet', {payee: result.data});
   };
 
   return (

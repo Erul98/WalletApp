@@ -19,8 +19,10 @@ const wallet = require('../assets/icons/wallet.png');
 const transaction = require('../assets/icons/transaction.png');
 const scan_qr = require('../assets/icons/scan_qr.png');
 const code_qr = require('../assets/icons/qr_code.png');
+const copy = require('../assets/icons/copy.png');
 
 export default {
+  copy,
   scan_qr,
   code_qr,
   back,

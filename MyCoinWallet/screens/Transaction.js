@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {View, Text, SafeAreaView, TouchableOpacity, Image} from 'react-native';
@@ -5,10 +6,16 @@ import LinearGradient from 'react-native-linear-gradient';
 import {theme, icons, images} from '../constants';
 
 const Transaction = props => {
+  const [selectedCurrency, setSelectedCurrency] = React.useState(null);
+  React.useEffect(() => {
+    const currency = props.route.params;
+    setSelectedCurrency(currency);
+  }, []);
+
   const navigation = props.navigation;
   console.log(props.route.params?.screen);
   function renderHeader() {
-    if (props.route.params?.screen === 'MainScreen') {
+    if (selectedCurrency?.screen === 'MainScreen') {
       return (
         <TouchableOpacity
           style={{
