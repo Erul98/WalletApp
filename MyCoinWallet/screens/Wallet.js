@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable eslint-comments/no-unused-disable */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
@@ -12,17 +14,62 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {theme, icons, images} from '../constants';
+import {theme, icons, images, internet} from '../constants';
 import Clipboard from '@react-native-community/clipboard';
 
 const Wallet = props => {
   const navigation = props.navigation;
   const [getData, setData] = React.useState(null);
   const [getPayee, setPayee] = React.useState(null);
+  const [_mount, _setMount] = React.useState(0);
   React.useEffect(() => {
     setData(props.route.params?.data);
     setPayee(props.route.params?.payee);
   }, [props.route.params]);
+
+  function sendMoneny() {
+    if (_mount < 0.0000001) {
+      return;
+    } else if (_mount > getData.body.amount) {
+      return;
+    }
+    if (getPayee === null || getPayee === '') {
+      return;
+    }
+    const data = {
+      amount: _mount,
+      privateKey: props.route.params?.privateKey,
+      payerAdress: getData.body.address,
+      payeeAdress: getPayee,
+    };
+    fetchData(data);
+  }
+
+  const fetchData = async data => {
+    if (!internet.checkInternetConnection) {
+      return;
+    }
+    try {
+      let response = await fetch('http://192.168.1.5:8080/transaction', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      if (json === null) {
+        return;
+      }
+      let json = await response.json();
+      if (json !== null) {
+        console.log(json);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   function renderHeader() {
     return (
       <TouchableOpacity
@@ -200,6 +247,8 @@ const Wallet = props => {
             placeholder={'Enter amount of coin '}
             placeholderTextColor={theme.COLORS.white}
             selectionColor={theme.COLORS.white}
+            value={_mount}
+            onChangeText={textChanged => _setMount(textChanged)}
           />
         </View>
       </View>
@@ -223,7 +272,7 @@ const Wallet = props => {
             alignItems: 'center',
             justifyContent: 'center',
           }}
-          onPress={() => console.log('send coin')}>
+          onPress={() => sendMoneny()}>
           <Text style={{color: theme.COLORS.white, ...theme.FONTS.body3}}>
             Send Coin
           </Text>

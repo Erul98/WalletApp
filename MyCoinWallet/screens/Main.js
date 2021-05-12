@@ -10,18 +10,14 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {images, theme} from '../constants';
+import {LoadingView} from '../components';
 
 const MainScreen = props => {
   const navigation = props.navigation;
-  //   const goToTransactionScreen = () => {
-  //     const navigateAction = NavigationActions.navigate({
-  //       routeName: 'Transaction',
-  //       params: {previous_screen: 'MainScreen'}, // current screen
-  //       action: NavigationActions.navigate('Transaction'), // screen you want to navigate to
-  //     });
-  //     navigation.dispatch(navigateAction);
-  //   };
+  const [modalVisible, setModalVisible] = React.useState(false);
+  React.useEffect(() => {}, []);
   const signUp = async () => {
+    setModalVisible(true);
     try {
       let response = await fetch('http://192.168.1.5:8080/api/v1/wallet', {
         method: 'POST',
@@ -31,11 +27,12 @@ const MainScreen = props => {
         },
       });
       let json = await response.json();
-      console.log(json);
+      setModalVisible(false);
       if (json.body !== null) {
         navigation.push('SignIn', {data: json});
       }
     } catch (error) {
+      setModalVisible(false);
       console.error(error);
     }
   };
@@ -111,6 +108,8 @@ const MainScreen = props => {
     );
   }
 
+  const renderLoadingView = () => {};
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : null}
@@ -152,6 +151,7 @@ const MainScreen = props => {
         </View>
         <View style={{flex: 1}}>{renderSubView()}</View>
       </LinearGradient>
+      <LoadingView modalVisible={modalVisible} />
     </KeyboardAvoidingView>
   );
 };

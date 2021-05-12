@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {theme, icons, images} from '../constants';
+import {theme, icons, images, internet} from '../constants';
 import Clipboard from '@react-native-community/clipboard';
 
 const SignIn = props => {
@@ -22,6 +22,9 @@ const SignIn = props => {
     setValueTextInput(props.route.params?.data.body.privateKey);
   }, []);
   const loginWallet = async key => {
+    if (!internet.checkInternetConnection) {
+      return;
+    }
     try {
       let response = await fetch('http://192.168.1.5:8080/api/v1/auth', {
         method: 'POST',
@@ -32,9 +35,8 @@ const SignIn = props => {
         body: JSON.stringify({key: key}),
       });
       let json = await response.json();
-      console.log(json);
       if (json.body !== null) {
-        navigation.push('TabBottom', {data: json});
+        navigation.push('TabBottom', {data: json, privateKey: valueTextInput});
       }
     } catch (error) {
       console.error(error);
@@ -167,7 +169,11 @@ const SignIn = props => {
             alignItems: 'center',
             justifyContent: 'center',
           }}
-          onPress={() => loginWallet(valueTextInput)}>
+          onPress={() => {
+            if (valueTextInput !== '' && valueTextInput !== undefined) {
+              loginWallet(valueTextInput);
+            }
+          }}>
           <Text style={{color: theme.COLORS.white, ...theme.FONTS.body3}}>
             Sign In
           </Text>
