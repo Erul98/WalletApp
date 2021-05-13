@@ -7,6 +7,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {theme, icons, internet} from '../constants';
 import {TransactionHistory} from '../components';
 import {LoadingView} from '../components';
+import {API} from '../services';
 
 const Transaction = props => {
   const currency = props.route.params;
@@ -54,36 +55,27 @@ const Transaction = props => {
   };
 
   const fetchData = async () => {
+    setModalVisible(true);
     if (!internet.checkInternetConnection) {
+      setModalVisible(false);
       return;
     }
-    setModalVisible(true);
-    try {
-      let response = await fetch('http://192.168.1.5:8080/blocks', {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-      let json = await response.json();
-      if (json !== null) {
-        const listTx = [];
-        let id = 0;
-        for (const block of json) {
-          for (const transaction of block.transactions) {
-            transaction.timestamp = block.timestamp;
-            transaction.id = id;
-            listTx.push(transaction);
-            id++;
-          }
+    const data = await API.GetMethod({request_url: API.URL.get_transaction});
+    if (data !== null) {
+      setModalVisible(false);
+      const listTx = [];
+      let id = 0;
+      for (const block of data) {
+        for (const transaction of block.transactions) {
+          transaction.timestamp = block.timestamp;
+          transaction.id = id;
+          listTx.push(transaction);
+          id++;
         }
-        setTransactionHistory(listTx);
       }
+      setTransactionHistory(listTx);
+    } else {
       setModalVisible(false);
-    } catch (error) {
-      setModalVisible(false);
-      console.error(error);
     }
   };
 

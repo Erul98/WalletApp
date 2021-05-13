@@ -16,6 +16,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {theme, icons, images, internet} from '../constants';
 import Clipboard from '@react-native-community/clipboard';
+import {API} from '../services';
 
 const Wallet = props => {
   const navigation = props.navigation;
@@ -45,28 +46,16 @@ const Wallet = props => {
     fetchData(data);
   }
 
-  const fetchData = async data => {
+  const fetchData = async body => {
     if (!internet.checkInternetConnection) {
       return;
     }
-    try {
-      let response = await fetch('http://192.168.1.5:8080/transaction', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (json === null) {
-        return;
-      }
-      let json = await response.json();
-      if (json !== null) {
-        console.log(json);
-      }
-    } catch (error) {
-      console.error(error);
+    const data = API.PostMethod({
+      request_url: API.URL.send_transaction,
+      body: JSON.stringify(body),
+    });
+    if (data !== null) {
+      console.log(data);
     }
   };
 

@@ -9,8 +9,9 @@ import {
   Image,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {images, theme} from '../constants';
+import {images, theme, internet} from '../constants';
 import {LoadingView} from '../components';
+import {API} from '../services';
 
 const MainScreen = props => {
   const navigation = props.navigation;
@@ -18,22 +19,18 @@ const MainScreen = props => {
   React.useEffect(() => {}, []);
   const signUp = async () => {
     setModalVisible(true);
-    try {
-      let response = await fetch('http://192.168.1.5:8080/api/v1/wallet', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-      let json = await response.json();
+    if (!internet.checkInternetConnection) {
       setModalVisible(false);
-      if (json.body !== null) {
-        navigation.push('SignIn', {data: json});
+      return;
+    }
+    const data = API.PostMethod({request_url: API.URL.create_wallet});
+    if (data !== null) {
+      setModalVisible(false);
+      if (data.body !== null) {
+        //navigation.push('SignIn', {data: data});
       }
-    } catch (error) {
+    } else {
       setModalVisible(false);
-      console.error(error);
     }
   };
   function renderSubView() {

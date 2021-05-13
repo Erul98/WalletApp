@@ -14,6 +14,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {theme, icons, images, internet} from '../constants';
 import Clipboard from '@react-native-community/clipboard';
+import {API} from '../services';
 
 const SignIn = props => {
   const navigation = props.navigation;
@@ -25,21 +26,14 @@ const SignIn = props => {
     if (!internet.checkInternetConnection) {
       return;
     }
-    try {
-      let response = await fetch('http://192.168.1.5:8080/api/v1/auth', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({key: key}),
-      });
-      let json = await response.json();
-      if (json.body !== null) {
-        navigation.push('TabBottom', {data: json, privateKey: valueTextInput});
+    const data = API.PostMethod({
+      request_url: API.URL.login,
+      body: JSON.stringify({key: key}),
+    });
+    if (data !== null) {
+      if (data.body !== null) {
+        navigation.push('TabBottom', {data: data, privateKey: valueTextInput});
       }
-    } catch (error) {
-      console.error(error);
     }
   };
   function renderHeader() {
