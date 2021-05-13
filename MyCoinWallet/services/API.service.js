@@ -2,6 +2,7 @@
 import React from 'react';
 
 export const URL = {
+  base_socket_url: 'http://192.168.1.4:40567',
   base_url: 'http://192.168.1.4:8080/',
   create_wallet: 'api/v1/wallet',
   get_transaction: 'blocks',

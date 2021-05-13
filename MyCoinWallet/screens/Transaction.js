@@ -8,7 +8,6 @@ import {theme, icons, checkInternetConnection} from '../constants';
 import {TransactionHistory} from '../components';
 import {LoadingView, Dialog} from '../components';
 import {API, Socket} from '../services';
-const base_url = 'http://192.168.1.4:40567';
 
 const Transaction = props => {
   const currency = props.route.params;
@@ -20,7 +19,7 @@ const Transaction = props => {
   const [loadingVisible, setLoadingVisible] = React.useState(false);
   const [dialogVisible, setDialogVisible] = React.useState(false);
   const [message, setMessage] = React.useState('');
-  let ws = new WebSocket(base_url);
+  let ws = new WebSocket(API.URL.base_socket_url);
 
   React.useEffect(() => {
     fetchData();
