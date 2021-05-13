@@ -10,10 +10,10 @@ import {
 } from 'react-native';
 import {theme} from '../constants';
 
-const Dialog = ({modalVisible, message, callBack, decorade}) => {
+const Dialog = ({modalVisible, message, callBack, align}) => {
   const modalBody = (
     <View style={styles.modalBody}>
-      <Text style={{...decorade, ...theme.FONTS.body3}}>{message}</Text>
+      <Text style={{textAlign: align, ...theme.FONTS.body3}}>{message}</Text>
     </View>
   );
 

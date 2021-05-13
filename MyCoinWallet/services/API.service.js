@@ -5,9 +5,9 @@ export const URL = {
   base_socket_url: 'http://192.168.1.4:40567',
   base_url: 'http://192.168.1.4:8080/',
   create_wallet: 'api/v1/wallet',
-  get_transaction: 'blocks',
+  get_transaction: 'api/v1/blocks',
   login: 'api/v1/auth',
-  send_transaction: 'transaction',
+  send_transaction: 'api/v1/transactions',
 };
 
 export const PostMethod = async ({request_url, body = null}) => {
