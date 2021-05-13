@@ -78,6 +78,7 @@ const TransactionHistory = ({customContainerStyle, history}) => {
       }}>
       <Text style={{...theme.FONTS.h2}}>Transaction History</Text>
       <FlatList
+        extraData={history}
         contentContainerStyle={{marginTop: theme.SIZES.padding}}
         scrollEnabled={true}
         data={history.sort((a, b) => a < b)}

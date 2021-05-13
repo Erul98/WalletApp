@@ -41,7 +41,7 @@ const SignIn = props => {
     if (data !== null) {
       if (data.status === 200) {
         if (data.body !== null) {
-          navigation.push('TabBottom', {
+          navigation.replace('TabBottom', {
             data: data,
             privateKey: valueTextInput,
           });

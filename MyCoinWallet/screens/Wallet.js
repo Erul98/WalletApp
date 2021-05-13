@@ -29,8 +29,11 @@ const Wallet = props => {
   const [message, setMessage] = React.useState('');
   React.useEffect(() => {
     setData(props.route.params?.data);
+  }, []);
+
+  React.useEffect(() => {
     setPayee(props.route.params?.payee);
-  }, [props.route.params]);
+  }, [props.route.params?.payee]);
 
   function sendMoneny() {
     if (_mount < 0.0000001) {
@@ -301,7 +304,7 @@ const Wallet = props => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : null}
+      behavior={Platform.OS === 'ios' ? 'height' : null}
       style={{flex: 1, marginBottom: 100}}>
       <LinearGradient
         colors={[theme.COLORS.lime, theme.COLORS.emerald]}

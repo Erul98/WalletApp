@@ -26,6 +26,7 @@ const Transaction = props => {
     return () => {
       ws = null;
       ws.close();
+      setTransactionHistory([]);
     };
   }, []);
 
