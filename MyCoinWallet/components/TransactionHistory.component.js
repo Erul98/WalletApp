@@ -4,14 +4,18 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, FlatList, Image} from 'react-native';
 import {icons, theme} from '../constants';
+import {Dialog} from '../components';
 
 const TransactionHistory = ({customContainerStyle, history}) => {
+  const [dialogVisible, setDialogVisible] = React.useState(false);
+  const [message, setMessage] = React.useState('');
   const renderItem = React.useCallback(({item}) => {
     if (history === null) {
       return <View />;
     }
     return (
       <TouchableOpacity
+        onPress={() => renderDetailItem(item)}
         style={{
           flexDirection: 'row',
           alignItems: 'center',
@@ -48,6 +52,18 @@ const TransactionHistory = ({customContainerStyle, history}) => {
       </TouchableOpacity>
     );
   });
+  const renderDetailItem = item => {
+    console.log(item);
+    setDialogVisible(true);
+    setMessage(
+      `ID: ${item.id}\n\nAmount: ${item.amount} AHY\n\nPayer: ${
+        item.payer
+      }\n\nPayee: ${item.payee}\n\nDate: ${longToDate(item.timestamp)}`,
+    );
+  };
+  const callBackFromDialog = () => {
+    setDialogVisible(false);
+  };
   return (
     <View
       style={{
@@ -77,6 +93,12 @@ const TransactionHistory = ({customContainerStyle, history}) => {
             }}
           />
         )}
+      />
+      <Dialog
+        modalVisible={dialogVisible}
+        message={message}
+        callBack={callBackFromDialog}
+        align={'left'}
       />
     </View>
   );

@@ -14,15 +14,19 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {theme, icons, images, internet} from '../constants';
+import {theme, icons, images, checkInternetConnection} from '../constants';
 import Clipboard from '@react-native-community/clipboard';
 import {API} from '../services';
+import {LoadingView, Dialog} from '../components';
 
 const Wallet = props => {
   const navigation = props.navigation;
   const [getData, setData] = React.useState(null);
   const [getPayee, setPayee] = React.useState(null);
   const [_mount, _setMount] = React.useState(0);
+  const [loadingVisible, setLoadingVisible] = React.useState(false);
+  const [dialogVisible, setDialogVisible] = React.useState(false);
+  const [message, setMessage] = React.useState('');
   React.useEffect(() => {
     setData(props.route.params?.data);
     setPayee(props.route.params?.payee);
@@ -30,11 +34,17 @@ const Wallet = props => {
 
   function sendMoneny() {
     if (_mount < 0.0000001) {
+      setDialogVisible(true);
+      setMessage('Money must be more 0.0000001 AHY');
       return;
     } else if (_mount > getData.body.amount) {
+      setDialogVisible(true);
+      setMessage('Not enough money to send');
       return;
     }
-    if (getPayee === null || getPayee === '') {
+    if (getPayee === null || getPayee === '' || getPayee === undefined) {
+      setDialogVisible(true);
+      setMessage('Payee must not null');
       return;
     }
     const data = {
@@ -47,16 +57,35 @@ const Wallet = props => {
   }
 
   const fetchData = async body => {
-    if (!internet.checkInternetConnection) {
+    setLoadingVisible(true);
+    if (!checkInternetConnection()) {
+      setLoadingVisible(false);
+      setDialogVisible(true);
+      setMessage('Internet Not Active');
       return;
     }
-    const data = API.PostMethod({
+    const data = await API.PostMethod({
       request_url: API.URL.send_transaction,
       body: JSON.stringify(body),
     });
+    setLoadingVisible(false);
+    setDialogVisible(true);
     if (data !== null) {
-      console.log(data);
+      if (data.status === 200) {
+        const value = getData;
+        value.body.amount = getData.body.amount - _mount;
+        setData(value);
+        setMessage(data.message);
+      } else {
+        setMessage(data.message);
+      }
+    } else {
+      setMessage('Send transaction to network fail');
     }
+  };
+
+  const callBackFromDialog = () => {
+    setDialogVisible(false);
   };
 
   function renderHeader() {
@@ -236,7 +265,7 @@ const Wallet = props => {
             placeholder={'Enter amount of coin '}
             placeholderTextColor={theme.COLORS.white}
             selectionColor={theme.COLORS.white}
-            value={_mount}
+            value={_mount.toString()}
             onChangeText={textChanged => _setMount(textChanged)}
           />
         </View>
@@ -283,6 +312,13 @@ const Wallet = props => {
           {renderForm()}
           {renderButton()}
         </ScrollView>
+        <LoadingView modalVisible={loadingVisible} />
+        <Dialog
+          modalVisible={dialogVisible}
+          message={message}
+          callBack={callBackFromDialog}
+          align={'center'}
+        />
       </LinearGradient>
     </KeyboardAvoidingView>
   );

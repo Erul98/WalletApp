@@ -12,28 +12,47 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {theme, icons, images, internet} from '../constants';
+import {theme, icons, images, checkInternetConnection} from '../constants';
 import Clipboard from '@react-native-community/clipboard';
 import {API} from '../services';
+import {LoadingView, Dialog} from '../components';
 
 const SignIn = props => {
   const navigation = props.navigation;
   const [valueTextInput, setValueTextInput] = React.useState(null);
+  const [loadingVisible, setLoadingVisible] = React.useState(false);
+  const [dialogVisible, setDialogVisible] = React.useState(false);
+  const [message, setMessage] = React.useState('');
   React.useEffect(() => {
     setValueTextInput(props.route.params?.data.body.privateKey);
   }, []);
   const loginWallet = async key => {
-    if (!internet.checkInternetConnection) {
+    if (!checkInternetConnection()) {
+      setLoadingVisible(false);
+      setDialogVisible(true);
+      setMessage('Internet Not Active');
       return;
     }
-    const data = API.PostMethod({
+    const data = await API.PostMethod({
       request_url: API.URL.login,
       body: JSON.stringify({key: key}),
     });
+    setLoadingVisible(false);
     if (data !== null) {
-      if (data.body !== null) {
-        navigation.push('TabBottom', {data: data, privateKey: valueTextInput});
+      if (data.status === 200) {
+        if (data.body !== null) {
+          navigation.push('TabBottom', {
+            data: data,
+            privateKey: valueTextInput,
+          });
+        }
+      } else {
+        setDialogVisible(true);
+        setMessage('KEY not found');
       }
+    } else {
+      setDialogVisible(true);
+      setMessage('KEY not found');
     }
   };
   function renderHeader() {
@@ -148,6 +167,10 @@ const SignIn = props => {
     );
   }
 
+  const callBackFromDialog = () => {
+    setDialogVisible(false);
+  };
+
   function renderButton() {
     return (
       <View
@@ -164,8 +187,13 @@ const SignIn = props => {
             justifyContent: 'center',
           }}
           onPress={() => {
+            setLoadingVisible(true);
             if (valueTextInput !== '' && valueTextInput !== undefined) {
               loginWallet(valueTextInput);
+            } else {
+              setLoadingVisible(false);
+              setDialogVisible(true);
+              setMessage('KEY must be not null');
             }
           }}>
           <Text style={{color: theme.COLORS.white, ...theme.FONTS.body3}}>
@@ -191,6 +219,13 @@ const SignIn = props => {
             {renderButton()}
           </View>
         </ScrollView>
+        <LoadingView modalVisible={loadingVisible} />
+        <Dialog
+          modalVisible={dialogVisible}
+          message={message}
+          callBack={callBackFromDialog}
+          align={'center'}
+        />
       </LinearGradient>
     </KeyboardAvoidingView>
   );

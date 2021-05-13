@@ -9,28 +9,37 @@ import {
   Image,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {images, theme, internet} from '../constants';
-import {LoadingView} from '../components';
+import {images, theme, checkInternetConnection} from '../constants';
+import {LoadingView, Dialog} from '../components';
 import {API} from '../services';
 
 const MainScreen = props => {
   const navigation = props.navigation;
-  const [modalVisible, setModalVisible] = React.useState(false);
+  const [loadingVisible, setLoadingVisible] = React.useState(false);
+  const [dialogVisible, setDialogVisible] = React.useState(false);
+  const [message, setMessage] = React.useState('');
   React.useEffect(() => {}, []);
   const signUp = async () => {
-    setModalVisible(true);
-    if (!internet.checkInternetConnection) {
-      setModalVisible(false);
+    setLoadingVisible(true);
+    if (!checkInternetConnection()) {
+      setLoadingVisible(false);
+      setDialogVisible(true);
+      setMessage('Internet Not Active');
       return;
     }
-    const data = API.PostMethod({request_url: API.URL.create_wallet});
+    const data = await API.PostMethod({request_url: API.URL.create_wallet});
     if (data !== null) {
-      setModalVisible(false);
+      setLoadingVisible(false);
       if (data.body !== null) {
-        //navigation.push('SignIn', {data: data});
+        navigation.push('SignIn', {data: data});
+      } else {
+        setDialogVisible(true);
+        setMessage('Error to generated');
       }
     } else {
-      setModalVisible(false);
+      setLoadingVisible(false);
+      setDialogVisible(true);
+      setMessage('Server error');
     }
   };
   function renderSubView() {
@@ -105,7 +114,9 @@ const MainScreen = props => {
     );
   }
 
-  const renderLoadingView = () => {};
+  const callBackFromDialog = () => {
+    setDialogVisible(false);
+  };
 
   return (
     <KeyboardAvoidingView
@@ -135,11 +146,10 @@ const MainScreen = props => {
           </View>
           <Image
             source={images.cardATM}
-            resizeMode={'contain'}
+            resizeMode={'stretch'}
             style={{
               flex: 1,
-              width: theme.SIZES.width - theme.SIZES.padding * 10,
-              height: 200,
+              width: theme.SIZES.width - theme.SIZES.padding * 6,
               alignContent: 'center',
               justifyContent: 'center',
               tintColor: theme.COLORS.purple,
@@ -148,7 +158,13 @@ const MainScreen = props => {
         </View>
         <View style={{flex: 1}}>{renderSubView()}</View>
       </LinearGradient>
-      <LoadingView modalVisible={modalVisible} />
+      <LoadingView modalVisible={loadingVisible} />
+      <Dialog
+        modalVisible={dialogVisible}
+        message={message}
+        callBack={callBackFromDialog}
+        align={'center'}
+      />
     </KeyboardAvoidingView>
   );
 };

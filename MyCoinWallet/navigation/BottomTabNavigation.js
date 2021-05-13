@@ -32,6 +32,7 @@ const MyTabs = props => {
         initialParams={props.route.params}
         name="Wallet"
         component={Screens.Wallet}
+        lazy={true}
         options={{
           tabBarIcon: ({color}) => (
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
@@ -59,6 +60,7 @@ const MyTabs = props => {
         initialParams={props.route.params}
         name="Transaction"
         component={Screens.Transaction}
+        lazy={true}
         options={{
           tabBarIcon: ({color}) => (
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
@@ -85,6 +87,7 @@ const MyTabs = props => {
       <Tab.Screen
         name="Scan"
         initialParams={props.route.params}
+        lazy={true}
         component={Screens.Scan}
         options={{
           tabBarIcon: ({color}) => (

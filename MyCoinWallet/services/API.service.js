@@ -2,7 +2,7 @@
 import React from 'react';
 
 export const URL = {
-  base_url: 'http://192.168.1.5:8080/',
+  base_url: 'http://192.168.1.4:8080/',
   create_wallet: 'api/v1/wallet',
   get_transaction: 'blocks',
   login: 'api/v1/auth',
@@ -17,6 +17,7 @@ export const PostMethod = async ({request_url, body = null}) => {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
+      body: body,
     });
     if (response !== null && response !== '') {
       let json = await response.json();
@@ -24,12 +25,12 @@ export const PostMethod = async ({request_url, body = null}) => {
     }
     return null;
   } catch (error) {
-    console.error(error);
+    console.log(error);
     return null;
   }
 };
 
-export const GetMethod = async ({request_url, params = null}) => {
+export const GetMethod = async ({request_url, params = ''}) => {
   try {
     let response = await fetch(URL.base_url + request_url + params, {
       method: 'GET',
@@ -40,7 +41,7 @@ export const GetMethod = async ({request_url, params = null}) => {
     }
     return null;
   } catch (error) {
-    console.error(error);
+    //console.log(error);
     return null;
   }
 };

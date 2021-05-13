@@ -3,9 +3,9 @@ import React from 'react';
 import NetInfo from '@react-native-community/netinfo';
 
 const checkInternetConnection = () => {
-  return NetInfo.isConnected.fetch().then(isConnected => {
-    return isConnected;
+  return NetInfo.addEventListener(state => {
+    return state.isConnected;
   });
 };
 
-export default NetInfo;
+export default checkInternetConnection;

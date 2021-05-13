@@ -4,10 +4,11 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {theme, icons, internet} from '../constants';
+import {theme, icons, checkInternetConnection} from '../constants';
 import {TransactionHistory} from '../components';
-import {LoadingView} from '../components';
-import {API} from '../services';
+import {LoadingView, Dialog} from '../components';
+import {API, Socket} from '../services';
+const base_url = 'http://192.168.1.4:40567';
 
 const Transaction = props => {
   const currency = props.route.params;
@@ -16,20 +17,20 @@ const Transaction = props => {
   const [isMainScreen, setMainScreen] = React.useState(
     selectedCurrency?.screen === 'MainScreen',
   );
-  const ws = new WebSocket('http://192.168.1.5:40567');
-  const [modalVisible, setModalVisible] = React.useState(false);
-
-  React.useEffect(() => {
-    return ws.close();
-  }, []);
+  const [loadingVisible, setLoadingVisible] = React.useState(false);
+  const [dialogVisible, setDialogVisible] = React.useState(false);
+  const [message, setMessage] = React.useState('');
+  let ws = new WebSocket(base_url);
 
   React.useEffect(() => {
     fetchData();
+    return () => {
+      ws = null;
+      ws.close();
+    };
   }, []);
 
   ws.onmessage = e => {
-    // a message was received
-    console.log(e.data);
     ioData(e.data);
   };
 
@@ -55,14 +56,18 @@ const Transaction = props => {
   };
 
   const fetchData = async () => {
-    setModalVisible(true);
-    if (!internet.checkInternetConnection) {
-      setModalVisible(false);
+    setLoadingVisible(true);
+    if (!checkInternetConnection()) {
+      setLoadingVisible(false);
+      setDialogVisible(true);
+      setMessage('Internet Not Active');
       return;
     }
-    const data = await API.GetMethod({request_url: API.URL.get_transaction});
+    const data = await API.GetMethod({
+      request_url: API.URL.get_transaction,
+    });
     if (data !== null) {
-      setModalVisible(false);
+      setLoadingVisible(false);
       const listTx = [];
       let id = 0;
       for (const block of data) {
@@ -75,7 +80,9 @@ const Transaction = props => {
       }
       setTransactionHistory(listTx);
     } else {
-      setModalVisible(false);
+      setLoadingVisible(false);
+      setDialogVisible(true);
+      setMessage('Server Error');
     }
   };
 
@@ -112,19 +119,32 @@ const Transaction = props => {
       );
     }
   }
+
+  const callBackFromDialog = () => {
+    setDialogVisible(false);
+  };
+
   function renderTransactionHistory() {
     return (
       <View
         style={{
           flex: 1,
           marginBottom: isMainScreen ? 0 : 100,
-          marginTop: isMainScreen ? 0 : theme.SIZES.padding * 2,
+          marginTop: isMainScreen
+            ? theme.SIZES.padding
+            : theme.SIZES.padding * 4,
         }}>
         <TransactionHistory
           customContainerStyle={{...styles.shadow}}
           history={transactionHistory}
         />
-        <LoadingView modalVisible={modalVisible} />
+        <LoadingView modalVisible={loadingVisible} />
+        <Dialog
+          modalVisible={dialogVisible}
+          message={message}
+          callBack={callBackFromDialog}
+          align={'center'}
+        />
       </View>
     );
   }
