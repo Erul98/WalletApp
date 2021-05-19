@@ -19,14 +19,13 @@ const Transaction = props => {
   const [loadingVisible, setLoadingVisible] = React.useState(false);
   const [dialogVisible, setDialogVisible] = React.useState(false);
   const [message, setMessage] = React.useState('');
-  let ws = new WebSocket(API.URL.base_socket_url);
+  let ws = Socket();
 
   React.useEffect(() => {
     fetchData();
     return () => {
       ws = null;
       ws.close();
-      setTransactionHistory([]);
     };
   }, []);
 
@@ -44,6 +43,7 @@ const Transaction = props => {
           for (const transaction of block.transactions) {
             transaction.timestamp = block.timestamp;
             transaction.id = id;
+            transaction.blockId = block.index;
             listTx.push(transaction);
             id++;
           }
@@ -71,9 +71,11 @@ const Transaction = props => {
       const listTx = [];
       let id = 0;
       for (const block of data) {
+        console.log(block);
         for (const transaction of block.transactions) {
           transaction.timestamp = block.timestamp;
           transaction.id = id;
+          transaction.blockId = block.index;
           listTx.push(transaction);
           id++;
         }

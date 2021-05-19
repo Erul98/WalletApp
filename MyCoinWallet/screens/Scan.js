@@ -8,17 +8,20 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  TextInput,
 } from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {theme, icons, images} from '../constants';
 import QRCode from 'react-native-qrcode-svg';
 import LinearGradient from 'react-native-linear-gradient';
+import Clipboard from '@react-native-community/clipboard';
 
 const Scan = props => {
   const [isShowView, setShowView] = React.useState(false);
   const [getIcon, setIcon] = React.useState(icons.code_qr);
   const [getIconText, setIconText] = React.useState('QR Code');
   const [getData, setData] = React.useState(null);
+  const [address, setAddress] = React.useState('');
   console.log(props.route.params?.data);
   React.useEffect(() => {
     setData(props.route.params?.data);
@@ -79,6 +82,52 @@ const Scan = props => {
     );
   };
 
+  function renderAddressFromQR() {
+    return (
+      <View>
+        <View>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'stretch',
+            }}>
+            <TextInput
+              editable={false}
+              style={{
+                flex: 10,
+                marginVertical: theme.SIZES.padding,
+                marginEnd: theme.SIZES.padding * 2,
+                borderBottomColor: theme.COLORS.black,
+                borderBottomWidth: 1,
+                height: 20,
+                color: theme.COLORS.black,
+                ...theme.FONTS.body3,
+              }}
+              value={address}
+            />
+            <TouchableOpacity
+              onPress={() => Clipboard.setString(address)}
+              style={{
+                flex: 1,
+                alignItems: 'center',
+              }}>
+              <Image
+                source={icons.copy}
+                resizeMode={'contain'}
+                style={{
+                  height: 25,
+                  width: 25,
+                  tintColor: theme.COLORS.purple,
+                  flex: 1,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   const renderQRMethod = () => {
     return (
       <View
@@ -87,21 +136,23 @@ const Scan = props => {
           bottom: 0,
           left: 0,
           right: 0,
-          height: 220,
+          height: 260,
           padding: theme.SIZES.padding * 3,
           borderTopLeftRadius: theme.SIZES.radius,
           borderTopRightRadius: theme.SIZES.radius,
           backgroundColor: theme.COLORS.white,
         }}>
+        {renderAddressFromQR()}
         <Text
           style={{
-            ...theme.FONTS.body4,
+            marginTop: theme.SIZES.padding,
+            ...theme.FONTS.body3,
           }}>
           Wallet address QR code
         </Text>
         <TouchableOpacity
           style={{
-            marginTop: theme.SIZES.padding * 2,
+            marginTop: theme.SIZES.padding,
             flexDirection: 'row',
             alignItems: 'center',
           }}
@@ -168,7 +219,12 @@ const Scan = props => {
   };
 
   const onBarCodeRead = result => {
-    props.navigation.navigate('Wallet', {payee: result.data});
+    if (result.data !== 'ERROR' && address !== result.data) {
+      setAddress(result.data);
+      // props.navigation.navigate('Wallet', {payee: result.data});
+    } else {
+      console.log('ERROR CODE');
+    }
   };
 
   return (
@@ -212,7 +268,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    bottom: 200,
+    bottom: 230,
     right: 0,
     backgroundColor: theme.COLORS.white,
     alignItems: 'center',

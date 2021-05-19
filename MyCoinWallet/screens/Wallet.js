@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable eslint-comments/no-unused-disable */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';

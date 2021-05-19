@@ -1,6 +1,6 @@
-const base_url = 'http://192.168.1.4:40567';
+import API from './API.service';
 export const Socket = () => {
-  return new WebSocket(base_url);
+  return new WebSocket(API.URL.base_socket_url);
 };
 
 export default Socket;

@@ -58,7 +58,9 @@ const TransactionHistory = ({customContainerStyle, history}) => {
     setMessage(
       `ID: ${item.id}\n\nAmount: ${item.amount} AHY\n\nPayer: ${
         item.payer
-      }\n\nPayee: ${item.payee}\n\nDate: ${longToDate(item.timestamp)}`,
+      }\n\nPayee: ${item.payee}\n\nBlock ID: ${
+        item.blockId
+      }\n\nDate: ${longToDate(item.timestamp)}`,
     );
   };
   const callBackFromDialog = () => {
@@ -78,7 +80,7 @@ const TransactionHistory = ({customContainerStyle, history}) => {
       }}>
       <Text style={{...theme.FONTS.h2}}>Transaction History</Text>
       <FlatList
-        extraData={history}
+        //extraData={history}
         contentContainerStyle={{marginTop: theme.SIZES.padding}}
         scrollEnabled={true}
         data={history.sort((a, b) => a < b)}
